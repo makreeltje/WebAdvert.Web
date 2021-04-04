@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebAdvert.Web.Views.Accounts
+namespace WebAdvert.Web.Models.Accounts
 {
     public class LoginModel
     {

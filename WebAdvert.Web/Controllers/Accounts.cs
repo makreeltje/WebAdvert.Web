@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.AspNetCore.Identity.Cognito;
+using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Microsoft.AspNetCore.Identity;
 using WebAdvert.Web.Views.Accounts;
 using Amazon.Runtime.Internal.Transform;
+using WebAdvert.Web.Models.Accounts;
 
 namespace WebAdvert.Web.Controllers
 {
@@ -24,7 +26,7 @@ namespace WebAdvert.Web.Controllers
             _pool = pool;
         }
 
-        public async Task<IActionResult> SignUp()
+        public IActionResult SignUp()
         {
             var model = new SignUpModel();
             return View(model);
@@ -55,7 +57,7 @@ namespace WebAdvert.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Confirm(ConfirmModel model)
+        public IActionResult Confirm(ConfirmModel model)
         {
 
             return View(model);
@@ -96,7 +98,7 @@ namespace WebAdvert.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Login(LoginModel model)
+        public IActionResult Login(LoginModel model)
         {
             return View(model);
         }
@@ -120,6 +122,68 @@ namespace WebAdvert.Web.Controllers
             }
 
             return View("Login", model);
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword(ForgotPasswordModel model)
+        {
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("ForgotPassword")]
+        public async Task<IActionResult> ForgotPasswordPost(ForgotPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("NotFound", "A user with the given email address was not found");
+                return View(model);
+            }
+
+            if (ModelState.IsValid)
+            {
+                await _pool.GetUser(model.Email).ForgotPasswordAsync();
+            }
+
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(ResetPasswordModel model)
+        {
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("ResetPassword")]
+        public async Task<IActionResult> ResetPasswordPost(ResetPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("NotFound", "A user with the given email address was not found");
+                return View(model);
+            }
+            if (ModelState.IsValid)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError(item.Code, item.Description);
+                    }
+                }
+                
+            }
+
+            return View("ResetPassword", model);
         }
     }
 }

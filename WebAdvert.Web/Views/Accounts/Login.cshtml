@@ -2,11 +2,11 @@
     ViewData["Title"] = "Login";
 }
 
-@model WebAdvert.Web.Views.Accounts.LoginModel
+@model WebAdvert.Web.Models.Accounts.LoginModel
 
 <div class="row">
     <div class="col-md-4">
-        <h4>Login using your email address and password</h4>
+        <h4>Login to your account</h4>
         <h5>
             <a asp-controller="Accounts" asp-action="SignUp">
                 If you are not a member you can sign up here
@@ -32,13 +32,12 @@
             
             <div class="form-group">
                 <div class="form-check">
-                    <label asp-for="RememberMe"></label>
                     <input asp-for="RememberMe"/>
                     @Html.DisplayName("Remember Me")
                 </div>
             </div>
             
-            <button type="submit">Login</button>
+            <button type="submit" class="btn btn-secondary">Login</button>
         </form>
     </div>
 </div>

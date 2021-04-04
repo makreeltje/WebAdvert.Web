@@ -2,7 +2,7 @@
 
 namespace WebAdvert.Web.Models.Accounts
 {
-    public class SignUpModel
+    public class ResetPasswordModel
     {
         [Required]
         [EmailAddress]
@@ -10,8 +10,11 @@ namespace WebAdvert.Web.Models.Accounts
         public string Email { get; set; }
 
         [Required]
+        [Display(Name = "Reset Password Token")]
+        public string Token { get; set; }
+
+        [Required]
         [DataType(DataType.Password)]
-        [StringLength(6, ErrorMessage = "Password must be at least 6 characters long!")]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
